@@ -1,5 +1,7 @@
 create-airflow:
+	mkdir -p ./dags ./logs ./plugins
+	echo -e "AIRFLOW_UID=$(id -u)" > .env
 	docker-compose -f docker-compose-airflow.yaml up -d
 
-create-airflow:
+create-postgres:
 	docker-compose -f docker-compose-postgres.yaml up -d

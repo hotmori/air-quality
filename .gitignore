@@ -1,1 +1,2 @@
-/logs
+/logs/dag_processor_manager
+/logs/scheduler
