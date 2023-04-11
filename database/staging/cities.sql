@@ -2,7 +2,7 @@ create schema staging;
 
 SET search_path TO staging;
 
-create table cities(id integer primary key,
+create table cities(city_id integer primary key,
 					name varchar,
 					longitude float,
 				    latitude float,
@@ -22,6 +22,8 @@ create table city_air(id integer,
 					  pm2_5 float,
 					  pm10 float,
 					  nh3 float,
+					  longitude float,
+				      latitude float,
 					  ts_insert TIMESTAMP DEFAULT now()
 					  );
 
