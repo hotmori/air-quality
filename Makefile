@@ -5,3 +5,6 @@ create-airflow:
 
 create-postgres:
 	docker-compose -f docker-compose-postgres.yaml up -d
+
+create-metabase:
+	docker-compose -f docker-compose-metabase.yaml up -d	
