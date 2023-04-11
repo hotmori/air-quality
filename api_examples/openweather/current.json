@@ -1,0 +1,11 @@
+http://api.openweathermap.org/data/2.5/air_pollution?lat=50&lon=50&appid=cf2d901e5e6d0e50382cb93d87ff8240
+
+{"coord":{"lon":50,"lat":50},"list":[{"main":{"aqi":2},"components":{"co":220.3,"no":0.05,"no2":0.37,"o3":98.71,"so2":1.33,"pm2_5":7.52,"pm10":13.19,"nh3":0.21},"dt":1680873216}]}
+
+Saint Petersburg
+http://api.openweathermap.org/data/2.5/air_pollution?lat=59.9343&lon=30.3351&appid=cf2d901e5e6d0e50382cb93d87ff8240
+{"coord":{"lon":30.3351,"lat":59.9343},"list":[{"main":{"aqi":5},"components":{"co":1735.69,"no":148.42,"no2":122.01,"o3":17.17,"so2":350.95,"pm2_5":43.04,"pm10":52.46,"nh3":0.14},"dt":1681131903}]}
+
+Peterhof
+http://api.openweathermap.org/data/2.5/air_pollution?lat=59.8845&lon=29.8852&appid=cf2d901e5e6d0e50382cb93d87ff8240
+{"coord":{"lon":29.8852,"lat":59.8845},"list":[{"main":{"aqi":4},"components":{"co":1041.41,"no":39.79,"no2":93.22,"o3":76.53,"so2":137.33,"pm2_5":60.31,"pm10":69.14,"nh3":0.03},"dt":1681132047}]}

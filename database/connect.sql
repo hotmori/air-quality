@@ -1,0 +1,1 @@
+psql --username=my_user  --host=postgresql-master --dbname=my_database
