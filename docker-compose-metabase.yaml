@@ -1,17 +1,17 @@
-version: "3"
+version: "2"
 services:
 
   metabase-postgres-db:
-    image: postgres
-    restart: always
+    image: 'bitnami/postgresql:latest'
     ports:
-      - 5432
+      - '5432'
+    volumes:
+      - 'postgresql_mb_data:/bitnami/postgresql'
     environment:
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /var/lib/postgresql/data
-    #volumes:
-      # declare your mount volume /host/dir:/container/dir
-      #- /home/app/pgdata:/var/lib/postgresql/data
+      - POSTGRESQL_USERNAME=mb_user
+      - POSTGRESQL_PASSWORD=mb_password
+      - POSTGRESQL_DATABASE=mb_database
+      - POSTGRESQL_POSTGRES_PASSWORD=xpostgres 
 
   metabase-app:
     image: metabase/metabase
@@ -22,13 +22,15 @@ services:
       # declare your mount volume /host/dir:/container/dir
       #- /home/app/metabase-data:/metabase-data
     environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: metabase
-      MB_DB_PORT: 5432
-      MB_DB_USER: metabase
-      MB_DB_PASS: postgres
-      MB_DB_HOST: metabase-postgres-db
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=mb_database
+      - MB_DB_PORT=5432
+      - MB_DB_USER=mb_user
+      - MB_DB_PASS=mb_password
+      - MB_DB_HOST=metabase-postgres-db
     depends_on:
       - metabase-postgres-db
     links:
       - metabase-postgres-db
+volumes:
+  postgresql_mb_data:      
