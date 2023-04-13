@@ -68,8 +68,6 @@ def get_openweather_data():
 
     return openweather_result
 
-
-
 with DAG(dag_id="load_staging_data",
          start_date=datetime(2021,1,1),
          schedule_interval="*/5 * * * *",
@@ -81,12 +79,11 @@ with DAG(dag_id="load_staging_data",
 
     task_connect_postgres_db = PostgresOperator(task_id = "connect_postgres_db",
                                                 postgres_conn_id="postgres_default",
-                                                #postgress_conn_id = "postgres_default",
                                                 sql = "SELECT 1 x;")
 
     task_save_data = PostgresOperator(task_id = "save_data_postgres_db",
                                       postgres_conn_id="postgres_default",
-                                      sql = """insert into staging.city_air(id, \
+                                      sql = """insert into staging.cities_air(city_id, \
                                                                         ts, \
                                                                         aqi, \
                                                                         co, \
@@ -95,9 +92,7 @@ with DAG(dag_id="load_staging_data",
                                                                         o3, \
                                                                         pm2_5, \
                                                                         pm10, \
-                                                                        nh3, \
-                                                                        longitude, \
-                                                                        latitude \
+                                                                        nh3 \
                                                                         )
                                                values('1', \
                                                       to_timestamp('{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['ux_timestamp'] }}'), \
@@ -108,9 +103,7 @@ with DAG(dag_id="load_staging_data",
                                                                    '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['component_o3'] }}', \
                                                                    '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['component_pm2_5'] }}', \
                                                                    '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['component_pm10'] }}', \
-                                                                   '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['component_nh3'] }}', \
-                                                                   '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['longitude'] }}', \
-                                                                   '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['latitude'] }}' \
+                                                                   '{{ ti.xcom_pull(key='return_value', task_ids='get_openweather_data')['component_nh3'] }}' \
                                                                    );
                                             """,
                                       params = {},

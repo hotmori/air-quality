@@ -11,8 +11,6 @@ create table cities_air(city_id integer,
 						pm2_5 float,
 						pm10 float,
 						nh3 float,
-						longitude float,
-						latitude float,
 						ts_insert TIMESTAMP DEFAULT now()
 						);
 
