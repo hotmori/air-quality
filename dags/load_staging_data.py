@@ -1,4 +1,5 @@
 from airflow import DAG
+from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from datetime import datetime
@@ -8,7 +9,19 @@ import requests, json
 def finalize():
     print("All is done")
 
+def get_cities():
+    request = "select * from staging.cities"
+    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
+    connection = pg_hook.get_conn()
+    cursor = connection.cursor()
+    cursor.execute(request)
+    cities = cursor.fetchall()
+    for city in cities:
+        print("City: {0} - {1}".format(city[0], city[1]))
+    return cities
+
 def get_openweather_data():
+    cities = get_cities()
     url = 'http://api.openweathermap.org/data/2.5/air_pollution?lat=59.9343&lon=30.3351'
     key = Variable.get("openweather_k")
     request_url = f'{url}&appid={key}'
