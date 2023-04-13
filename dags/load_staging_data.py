@@ -8,12 +8,15 @@ import requests, json
 
 def finalize():
     print("All is done")
-        
+
+def get_db_connection():
+    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
+    connection = pg_hook.get_conn()
+    return connection        
 
 def get_cities():
     request = "select city_id, longitude, latitude from staging.cities"
-    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
-    connection = pg_hook.get_conn()
+    connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute(request)
     cities = cursor.fetchall()
