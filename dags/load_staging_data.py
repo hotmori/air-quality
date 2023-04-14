@@ -106,7 +106,7 @@ def generate_inserts(cities_air_data):
                        {cities_air_data[city_air_data]["component_nh3"]}\
                        )\n'
     
-    result_sql = f'{sql_ins} values {sql_vals};'
+    result_sql = f'{sql_ins} values {sql_vals}; commit;'
     result_sql = " ".join(result_sql.split())
     print ("result_sql: ", result_sql)
 
@@ -121,6 +121,10 @@ with DAG(dag_id="load_staging_data",
          start_date=datetime(2021,1,1),
          schedule_interval="5 * * * *",
          catchup=False) as dag:
+    
+    #task_get_db_connection = PythonOperator(
+    #    task_id="get_db_connection",
+    #    python_callable=get_db_connection)
 
     task_get_openweather_data = PythonOperator(
         task_id="get_openweather_data",
