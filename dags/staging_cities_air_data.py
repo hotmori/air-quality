@@ -122,10 +122,10 @@ def generate_inserts(cities_air_data):
     print ("result_sql: ", result_sql)
     return result_sql
 
-with DAG(dag_id="load_staging_data",
+with DAG(dag_id="staging_cities_air_data",
          start_date=datetime(2021,1,1),
          schedule_interval="5 * * * *",
-         catchup=False) as dag:    
+         catchup=False) as dag:
 
     task_get_cities_air_data = PythonOperator(
         task_id="get_cities_air_data",
