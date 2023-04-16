@@ -6,9 +6,3 @@ create table cities(city_id integer primary key,
 					longitude float,
 				    latitude float,
 					ts_insert TIMESTAMP DEFAULT now());
-
-
-
-
-
-		  
