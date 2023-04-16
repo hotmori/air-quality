@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
-from airflow.operators.postgres_operator import PostgresOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
@@ -19,7 +18,10 @@ def get_cities():
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute(request)
+   
     cities = cursor.fetchall()
+    cursor.close()
+    connection.close()
     city_dict = {}
 
     for city in cities:
@@ -65,7 +67,7 @@ def get_city_air_data(latitude, longitude):
 
     return city_air_data
 
-def get_openweather_data():
+def get_cities_air_data():
     cities = get_cities()
     cities_air_data = {}
     for city in cities:
@@ -74,10 +76,19 @@ def get_openweather_data():
         cities_air_data[city] = city_air_data
         
     print("cities_air_data", cities_air_data)
+    return cities_air_data
 
-
+def save_cities_air_data(**kwargs):
+    ti = kwargs['ti']
+    cities_air_data = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data')
+    print("cities_air_data: ", cities_air_data)
     sql_inserts = generate_inserts(cities_air_data)
-    return sql_inserts
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(sql_inserts)
+    cursor.close()
+    connection.close()
+
 
 def generate_inserts(cities_air_data):
     sql_ins = """insert into staging.cities_air(city_id, \
@@ -109,33 +120,23 @@ def generate_inserts(cities_air_data):
     result_sql = f'{sql_ins} values {sql_vals}; commit;'
     result_sql = " ".join(result_sql.split())
     print ("result_sql: ", result_sql)
-
-
-    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
-    connection = pg_hook.get_conn()
-    cursor = connection.cursor()
-    cursor.execute(result_sql)
     return result_sql
 
 with DAG(dag_id="load_staging_data",
          start_date=datetime(2021,1,1),
          schedule_interval="5 * * * *",
-         catchup=False) as dag:
+         catchup=False) as dag:    
+
+    task_get_cities_air_data = PythonOperator(
+        task_id="get_cities_air_data",
+        python_callable=get_cities_air_data)
     
-    #task_get_db_connection = PythonOperator(
-    #    task_id="get_db_connection",
-    #    python_callable=get_db_connection)
-
-    task_get_openweather_data = PythonOperator(
-        task_id="get_openweather_data",
-        python_callable=get_openweather_data)
-
-    task_connect_postgres_db = PostgresOperator(task_id = "connect_postgres_db",
-                                                postgres_conn_id="postgres_default",
-                                                sql = "SELECT 1 x;")
+    task_save_cities_air_data = PythonOperator(
+        task_id="save_cities_air_data",
+        python_callable=save_cities_air_data)
 
     task_finalize = PythonOperator(
         task_id="finalize",
         python_callable=finalize)
 
-task_get_openweather_data >> task_connect_postgres_db #>> task_save_data
+task_get_cities_air_data >> task_save_cities_air_data >> task_finalize
