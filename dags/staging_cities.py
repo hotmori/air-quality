@@ -7,13 +7,43 @@ from airflow.models import Variable
 import requests, json
 
 
+def get_db_connection():
+    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
+    connection = pg_hook.get_conn()
+    return connection
 
-def get_cities_with_missed_coordinates():
-    return None
+def get_cities_with_empty_coordinates():
+    request = "select city_id, name, country \
+                 from staging.cities c \
+                where not exists (select null \
+                                    from staging.cities_coordinates cc \
+                                   where cc.city_id = c.city_id) \
+    "
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(request)
+   
+    cities = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    print("cities: ", cities)
+    return cities
 
-def get_city_coordinates():
-    city = 'Saint Petersburg'
-    country = 'Russia'
+def get_cities_coordinates(**kwargs):
+    ti = kwargs['ti']
+    cities_with_empty_coordinates = ti.xcom_pull(key='return_value', task_ids='get_cities_with_empty_coordinates')
+    cities_with_coordinates = {}
+    for city in cities_with_empty_coordinates:
+        city_id = city[0]
+        name = city[1]
+        country = city[2]    
+        coordinates = get_city_coordinates(name,country)
+        print("city: ", city, "coordinates: ", coordinates)
+        cities_with_coordinates[city_id] = coordinates
+    return cities_with_coordinates
+
+def get_city_coordinates(city, country):
+    print("city_name: ", city, "country_name: ", country)
     base_url = 'https://api.api-ninjas.com/v1/geocoding?'
     key = Variable.get("ninjas_k")
     request_url = f'{base_url}city={city}&country={country}'
@@ -39,6 +69,34 @@ def get_city_coordinates():
 
     return {"latitude" : latitude, "longitude" : longitude}
 
+def generate_inserts(cities_coordinates_data):
+    sql_ins = """insert into staging.cities_coordinates(city_id, \
+                                                longitude, \
+                                                latitude \
+                                                ) """
+    sql_vals = ""
+    for i, city_coord_data in enumerate(cities_coordinates_data):
+
+        sql_vals += (',' if i > 0 else '') + f'({city_coord_data},  \
+                       {cities_coordinates_data[city_coord_data]["longitude"]}, \
+                       {cities_coordinates_data[city_coord_data]["latitude"]} \
+                       )\n'
+    
+    result_sql = f'{sql_ins} values {sql_vals}; commit;'
+    result_sql = " ".join(result_sql.split())
+    print ("result_sql: ", result_sql)
+    return result_sql
+
+def save_cities_coordinates_data(**kwargs):
+    ti = kwargs['ti']
+    cities_coordinates_data = ti.xcom_pull(key='return_value', task_ids='get_cities_coordinates')
+    print("cities_coordinates_data: ", cities_coordinates_data)
+    sql_inserts = generate_inserts(cities_coordinates_data)
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(sql_inserts)
+    cursor.close()
+    connection.close()
 
 
 with DAG(dag_id="staging_cities",
@@ -49,11 +107,19 @@ with DAG(dag_id="staging_cities",
     task_update_cities = PostgresOperator(task_id = "update_cities",
                                           postgres_conn_id="postgres_default",
                                           sql = "sql/dml_cities.sql")
+    
+    task_get_cities_with_empty_coordinates = PythonOperator(
+        task_id="get_cities_with_empty_coordinates",
+        python_callable=get_cities_with_empty_coordinates)
 
-    #task_get_city_coordinates = PythonOperator(
-    #    task_id="get_city_coordinates",
-    #    python_callable=get_city_coordinates)    
+    task_get_cities_coordinates = PythonOperator(
+        task_id="get_cities_coordinates",
+        python_callable=get_cities_coordinates)
+    
+    task_save_cities_coordinates_data  = PythonOperator(
+        task_id="save_cities_coordinates_data",
+        python_callable=save_cities_coordinates_data )
     
 
 
-task_update_cities    
+task_update_cities >>  task_get_cities_with_empty_coordinates >> task_get_cities_coordinates >> task_save_cities_coordinates_data

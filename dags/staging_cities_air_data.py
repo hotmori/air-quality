@@ -11,7 +11,7 @@ def finalize():
 def get_db_connection():
     pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
     connection = pg_hook.get_conn()
-    return connection        
+    return connection
 
 def get_cities():
     request = "select city_id, longitude, latitude from staging.cities"
