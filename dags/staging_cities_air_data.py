@@ -14,7 +14,11 @@ def get_db_connection():
     return connection
 
 def get_cities():
-    request = "select city_id, longitude, latitude from staging.cities"
+    request = "select c.city_id, cc.longitude, cc.latitude \
+              from staging.cities c \
+              join staging.cities_coordinates cc \
+                on c.city_id = cc.city_id \
+              where c.is_active != 0"
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute(request)
