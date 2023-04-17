@@ -90,18 +90,19 @@ def generate_inserts(cities_coordinates_data):
 def save_cities_coordinates_data(**kwargs):
     ti = kwargs['ti']
     cities_coordinates_data = ti.xcom_pull(key='return_value', task_ids='get_cities_coordinates')
-    print("cities_coordinates_data: ", cities_coordinates_data)
-    sql_inserts = generate_inserts(cities_coordinates_data)
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(sql_inserts)
-    cursor.close()
-    connection.close()
+    if cities_coordinates_data:
+        print("cities_coordinates_data: ", cities_coordinates_data)
+        sql_inserts = generate_inserts(cities_coordinates_data)
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql_inserts)
+        cursor.close()
+        connection.close()
 
 
 with DAG(dag_id="staging_cities",
          start_date=datetime(2021,1,1),
-         schedule_interval="5 * * * *",
+         schedule_interval="*/5 * * * *",
          catchup=False) as dag:
     
     task_update_cities = PostgresOperator(task_id = "update_cities",
