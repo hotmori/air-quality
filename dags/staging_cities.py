@@ -14,39 +14,27 @@ def get_city_coordinates():
     base_url = 'https://api.api-ninjas.com/v1/geocoding?'
     key = Variable.get("ninjas_k")
     request_url = f'{base_url}city={city}&country={country}'
-    #response = requests.get(request_url, headers={'X-Api-Key': key})
-
-    """
-    Example responses
-    [{"name": "London", "latitude": 51.5073219, "longitude": -0.1276474, "country": "GB", "state": "England"}, 
-     {"name": "City of London", "latitude": 51.5156177, "longitude": -0.0919983, "country": "GB", "state": "England"}, 
-     {"name": "Chelsea", "latitude": 51.4875167, "longitude": -0.1687007, "country": "GB", "state": "England"}, 
-     {"name": "Vauxhall", "latitude": 51.4874834, "longitude": -0.1229297, "country": "GB", "state": "England"}
-    ]
-
-    [{"name": "Saint Petersburg", "latitude": 59.938732, "longitude": 30.316229, "country": "RU", "state": "Saint Petersburg"}]
-    """
+    response = requests.get(request_url, headers={'X-Api-Key': key})
     
-    #if response.status_code == requests.codes.ok:
-    #    print(response.text)
-    #else:
-    #    print("Error:", response.status_code, response.text)
-    #    raise ValueError('Ninjas API connection error status code:', response.status_code, " message: ", response.text)
+    if response.status_code == requests.codes.ok:
+        print(response.text)
+    else:
+        print("Error:", response.status_code, response.text)
+        raise ValueError('Ninjas API connection error status code:', response.status_code, " message: ", response.text)
 
-    #json_data = response.json()
-
+    cities_list = response.json()
+    # Examples 
     #cities_list = json.loads("[{\"name\": \"Saint Petersburg\", \"latitude\": 59.938732, \"longitude\": 30.316229, \"country\": \"RU\", \"state\": \"Saint Petersburg\"}]")
-    cities_list = json.loads("[{\"name\": \"London\", \"latitude\": 51.5073219, \"longitude\": -0.1276474, \"country\": \"GB\", \"state\": \"England\"}, \
-     {\"name\": \"City of London\", \"latitude\": 51.5156177, \"longitude\": -0.0919983, \"country\": \"GB\", \"state\": \"England\"}, \
-     {\"name\": \"Chelsea\", \"latitude\": 51.4875167, \"longitude\": -0.1687007, \"country\": \"GB\", \"state\": \"England\"}, \
-     {\"name\": \"Vauxhall\", \"latitude\": 51.4874834, \"longitude\": -0.1229297, \"country\": \"GB\", \"state\": \"England\"} \
-    ]")
+    #cities_list = json.loads("[{\"name\": \"London\", \"latitude\": 51.5073219, \"longitude\": -0.1276474, \"country\": \"GB\", \"state\": \"England\"}, \
+    # {\"name\": \"City of London\", \"latitude\": 51.5156177, \"longitude\": -0.0919983, \"country\": \"GB\", \"state\": \"England\"}, \
+    # {\"name\": \"Chelsea\", \"latitude\": 51.4875167, \"longitude\": -0.1687007, \"country\": \"GB\", \"state\": \"England\"}, \
+    # {\"name\": \"Vauxhall\", \"latitude\": 51.4874834, \"longitude\": -0.1229297, \"country\": \"GB\", \"state\": \"England\"} \
+    #]")
 
-    for city in cities_list:
-        print("city: ", city) 
+    latitude = cities_list[0]["latitude"]
+    longitude = cities_list[0]["longitude"]
 
-
-    return None
+    return {"latitude" : latitude, "longitude" : longitude}
 
 
 
