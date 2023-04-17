@@ -1,9 +1,12 @@
 from airflow import DAG
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
+from airflow.operators.postgres_operator import PostgresOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
+
+
 
 def get_cities_with_missed_coordinates():
     return None
@@ -42,9 +45,15 @@ with DAG(dag_id="staging_cities",
          start_date=datetime(2021,1,1),
          schedule_interval="5 * * * *",
          catchup=False) as dag:
-
-    task_get_city_coordinates = PythonOperator(
-        task_id="get_city_coordinates",
-        python_callable=get_city_coordinates)    
     
-task_get_city_coordinates    
+    task_update_cities = PostgresOperator(task_id = "update_cities",
+                                          postgres_conn_id="postgres_default",
+                                          sql = "sql/dml_cities.sql")
+
+    #task_get_city_coordinates = PythonOperator(
+    #    task_id="get_city_coordinates",
+    #    python_callable=get_city_coordinates)    
+    
+
+
+task_update_cities    
