@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
+from airflow.exceptions import AirflowSkipException
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
@@ -32,6 +33,8 @@ def get_cities_with_empty_coordinates():
 def get_cities_coordinates(**kwargs):
     ti = kwargs['ti']
     cities_with_empty_coordinates = ti.xcom_pull(key='return_value', task_ids='get_cities_with_empty_coordinates')
+    if not cities_with_empty_coordinates:
+        raise AirflowSkipException
     cities_with_coordinates = {}
     for city in cities_with_empty_coordinates:
         city_id = city[0]
