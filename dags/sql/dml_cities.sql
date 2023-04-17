@@ -1,7 +1,9 @@
 with wi (city_id, name, country, is_active)
-as (select 1,  'Saint Petersburg', 'Russia', 1
-       union all
-       select 2,  'Peterhof', 'Russia', 1 )
+as (select 1,  'Saint Petersburg', 'Russia', 1 union all
+    select 2,  'Peterhof', 'Russia', 1  union all
+	select 3, 'Lomonosov', 'Russia', 1	union all
+	select 4, 'Moscow', 'Russia', 1
+	)
 merge into staging.cities as t2
 using wi as t1
 on (t1.city_id = t2.city_id)
