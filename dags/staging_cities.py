@@ -15,7 +15,7 @@ def get_db_connection():
 
 def get_cities_with_empty_coordinates():
     request = "select city_id, name, country \
-                 from staging.cities c \
+                 from staging.vcities c \
                 where not exists (select null \
                                     from staging.cities_coordinates cc \
                                    where cc.city_id = c.city_id) \
