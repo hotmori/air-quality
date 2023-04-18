@@ -5,7 +5,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime
 from airflow.models import Variable
-from common_package.common_module import get_db_connection
+from common_package.common_module import get_db_connection, BASE_URL_NINJAS_GEO
 import requests, json
 
 
@@ -43,7 +43,7 @@ def get_cities_coordinates(**kwargs):
 
 def get_city_coordinates(city, country):
     print("city_name: ", city, "country_name: ", country)
-    base_url = 'https://api.api-ninjas.com/v1/geocoding?'
+    base_url = BASE_URL_NINJAS_GEO
     key = Variable.get("ninjas_k")
     request_url = f'{base_url}city={city}&country={country}'
     response = requests.get(request_url, headers={'X-Api-Key': key})

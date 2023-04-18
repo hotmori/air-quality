@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
-from common_package.common_module import get_db_connection
+from common_package.common_module import get_db_connection, BASE_URL_OPENWEATHER_CURRENT
 
 def finalize():
     print("All is done")
@@ -30,7 +30,7 @@ def get_cities():
     return city_dict
 
 def get_city_air_data(latitude, longitude):
-    base_url = 'http://api.openweathermap.org/data/2.5/air_pollution?'
+    base_url = BASE_URL_OPENWEATHER_CURRENT
     key = Variable.get("openweather_k")
     request_url = f'{base_url}lat={latitude}&lon={longitude}&appid={key}'
     response = requests.get(request_url)
