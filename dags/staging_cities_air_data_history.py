@@ -1,10 +1,12 @@
 from airflow import DAG
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
+from airflow.exceptions import AirflowSkipException
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
 from common_package.common_module import run_select, \
+                                         run_inserts, \
                                          get_openweather_key, \
                                          BASE_URL_OPENWEATHER_HISTORY
 
@@ -17,6 +19,9 @@ def get_cities_air_data_missed_ranges():
                                 join staging.vcities_coordinates vc on vc.city_id = vr.city_id\
                                 order by vr.city_id")
     print ("missed_ranges", missed_ranges)
+    if not missed_ranges:
+        raise AirflowSkipException
+
     result_missed_ranges = {}
     for range in missed_ranges:
         city_id = range[0]
@@ -64,7 +69,8 @@ def get_city_history_data(city_id, ux_start, ux_end, latitude, longitude):
         component_pm10 = components["pm10"]
         component_nh3 = components["nh3"]
         ux_timestamp = rec["dt"]
-        result_history_data[ux_timestamp] = {"component_co": component_co,
+        result_history_data[ux_timestamp] = {"aqi": aqi,
+                                             "component_co": component_co,
                                              "component_no": component_no,
                                              "component_no2": component_no2,
                                              "component_o3": component_o3,
@@ -75,7 +81,45 @@ def get_city_history_data(city_id, ux_start, ux_end, latitude, longitude):
                                              }
     return result_history_data
 
+def generate_inserts(city_id, city_history_air):
+    sql_ins = """insert into staging.cities_air(city_id, \
+                                                ts, \
+                                                aqi, \
+                                                co, \
+                                                no, \
+                                                no2, \
+                                                o3, \
+                                                pm2_5, \
+                                                pm10, \
+                                                nh3, \
+                                                source_flg \
+                                                ) """
+    sql_vals = ""
+    print (city_id, "city_history_air " , city_history_air)
+    for i, ux_timestamp in enumerate(city_history_air):
+    
+        sql_vals += (',' if i > 0 else '') + f'({city_id},  \
+                       to_timestamp({ux_timestamp}), \
+                       {city_history_air[ux_timestamp]["aqi"]}, \
+                       {city_history_air[ux_timestamp]["component_co"]}, \
+                       {city_history_air[ux_timestamp]["component_no"]}, \
+                       {city_history_air[ux_timestamp]["component_no2"]}, \
+                       {city_history_air[ux_timestamp]["component_o3"]}, \
+                       {city_history_air[ux_timestamp]["component_pm2_5"]},\
+                       {city_history_air[ux_timestamp]["component_pm10"]},\
+                       {city_history_air[ux_timestamp]["component_nh3"]}, \
+                       \'H\'\
+                       )\n'
+    
+    result_sql = f'{sql_ins} values {sql_vals}; commit;'
+    result_sql = " ".join(result_sql.split())
+    print ("result_sql: ", result_sql)
+
+    return result_sql
+
 def save_city_history_data(city_id, city_air_history):
+    insert_sql = generate_inserts(city_id, city_air_history)
+    run_inserts(insert_sql)
     return None
 
 def process_cities_history_data(**kwargs):
@@ -88,12 +132,12 @@ def process_cities_history_data(**kwargs):
                                         latitude = cities_ranges[city]["latitude"], \
                                         longitude = cities_ranges[city]["longitude"]\
                                             )
-        save_city_history_data(city_air_history)
+        save_city_history_data(city, city_air_history)
         #print("history: ", city_air_history)
 
 
 
-        return city_air_history
+    return None
 
 with DAG(dag_id="staging_cities_air_data_history",
          start_date=datetime(2021,1,1),
