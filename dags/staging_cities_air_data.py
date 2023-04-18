@@ -4,14 +4,10 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
+from common_package.common_module import get_db_connection
 
 def finalize():
     print("All is done")
-
-def get_db_connection():
-    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
-    connection = pg_hook.get_conn()
-    return connection
 
 def get_cities():
     request = "select c.city_id, cc.longitude, cc.latitude \

@@ -5,13 +5,9 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime
 from airflow.models import Variable
+from common_package.common_module import get_db_connection
 import requests, json
 
-
-def get_db_connection():
-    pg_hook = PostgresHook(postgre_conn_id = "postgres_default")
-    connection = pg_hook.get_conn()
-    return connection
 
 def get_cities_with_empty_coordinates():
     request = "select city_id, name, country \

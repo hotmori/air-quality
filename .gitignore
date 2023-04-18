@@ -3,3 +3,4 @@
 /logs/dag_id=iss_data_dag/run_id=manual__2023-04-06T194054.412483+0000/task_id=connect_postgres_db/*.log
 *.log
 /dags/__pycache__
+/dags/common_package/__pycache__/*.pyc
