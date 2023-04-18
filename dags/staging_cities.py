@@ -5,7 +5,10 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime
 from airflow.models import Variable
-from common_package.common_module import get_db_connection, get_ninjas_key, BASE_URL_NINJAS_GEO
+from common_package.common_module import run_select, \
+                                         run_inserts, \
+                                         get_ninjas_key, \
+                                         BASE_URL_NINJAS_GEO
 import requests, json
 
 
@@ -16,13 +19,7 @@ def get_cities_with_empty_coordinates():
                                     from staging.vcities_coordinates cc \
                                    where cc.city_id = c.city_id) \
     "
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(request)
-   
-    cities = cursor.fetchall()
-    cursor.close()
-    connection.close()
+    cities = run_select(request)    
     print("cities: ", cities)
     return cities
 
@@ -81,7 +78,7 @@ def generate_inserts(cities_coordinates_data):
                        {cities_coordinates_data[city_coord_data]["latitude"]} \
                        )\n'
     
-    result_sql = f'{sql_ins} values {sql_vals}; commit;'
+    result_sql = f'{sql_ins} values {sql_vals};'
     result_sql = " ".join(result_sql.split())
     print ("result_sql: ", result_sql)
     return result_sql
@@ -92,11 +89,7 @@ def save_cities_coordinates_data(**kwargs):
     if cities_coordinates_data:
         print("cities_coordinates_data: ", cities_coordinates_data)
         sql_inserts = generate_inserts(cities_coordinates_data)
-        connection = get_db_connection()
-        cursor = connection.cursor()
-        cursor.execute(sql_inserts)
-        cursor.close()
-        connection.close()
+        run_inserts(sql_inserts)
 
 
 with DAG(dag_id="staging_cities",

@@ -22,8 +22,8 @@ def get_cities_air_data_missed_ranges():
         city_id = range[0]
         dt_start = range[1].strftime("%d/%m/%Y %H:%M:%S")
         dt_end = range[2].strftime("%d/%m/%Y %H:%M:%S")
-        ux_start = range[1].timestamp()        
-        ux_end = range[2].timestamp()
+        ux_start = int(range[1].timestamp())
+        ux_end = int(range[2].timestamp())
         longitude = range[3]
         latitude = range[4]
 
@@ -40,10 +40,8 @@ def get_cities_air_data_missed_ranges():
 def get_city_history_data(city_id, ux_start, ux_end, latitude, longitude):
     base_url = BASE_URL_OPENWEATHER_HISTORY
     key = get_openweather_key()
-
-
-
-    request_url = f'{base_url}lat={latitude}&lon={longitude}&appid={key}'
+    request_url = f'{base_url}lat={latitude}&lon={longitude}&start={ux_start}&end={ux_end}&appid={key}'
+    print("request_url", request_url)
     response = requests.get(request_url)
     status_code = response.status_code
     if status_code != 200:
@@ -51,26 +49,51 @@ def get_city_history_data(city_id, ux_start, ux_end, latitude, longitude):
 
     json_data = response.json()
 
-    metric_list = json_data["list"]
-    aqi = metric_list[0]["main"]["aqi"]
-    components =  metric_list[0]["components"]
-    component_co = components["co"]
-    component_no = components["no"]
-    component_no2 = components["no2"]
-    component_o3 = components["o3"]
-    component_so2 = components["so2"]
-    component_pm2_5 = components["pm2_5"]
-    component_pm10 = components["pm10"]
-    component_nh3 = components["nh3"]
-    ux_timestamp = metric_list[0]["dt"]    
+    records = json_data["list"]
+    result_history_data = {}
+    for rec in records:
+
+        aqi = rec["main"]["aqi"]
+        components =  rec["components"]
+        component_co = components["co"]
+        component_no = components["no"]
+        component_no2 = components["no2"]
+        component_o3 = components["o3"]
+        component_so2 = components["so2"]
+        component_pm2_5 = components["pm2_5"]
+        component_pm10 = components["pm10"]
+        component_nh3 = components["nh3"]
+        ux_timestamp = rec["dt"]
+        result_history_data[ux_timestamp] = {"component_co": component_co,
+                                             "component_no": component_no,
+                                             "component_no2": component_no2,
+                                             "component_o3": component_o3,
+                                             "component_so2": component_so2,
+                                             "component_pm2_5": component_pm2_5,
+                                             "component_pm10": component_pm10,
+                                             "component_nh3": component_nh3
+                                             }
+    return result_history_data
+
+def save_city_history_data(city_id, city_air_history):
     return None
 
-def get_history_data(**kwargs):
+def process_cities_history_data(**kwargs):
     ti = kwargs['ti']
-    ranges = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data_missed_ranges')
+    cities_ranges = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data_missed_ranges')
+    for city in cities_ranges:
+        city_air_history = get_city_history_data(city_id=city, \
+                                        ux_start = cities_ranges[city]["ux_start"], \
+                                        ux_end = cities_ranges[city]["ux_end"], \
+                                        latitude = cities_ranges[city]["latitude"], \
+                                        longitude = cities_ranges[city]["longitude"]\
+                                            )
+        save_city_history_data(city_air_history)
+        #print("history: ", city_air_history)
 
 
-    return None
+
+        return city_air_history
 
 with DAG(dag_id="staging_cities_air_data_history",
          start_date=datetime(2021,1,1),
@@ -81,12 +104,12 @@ with DAG(dag_id="staging_cities_air_data_history",
         task_id="get_cities_air_data_missed_ranges",
         python_callable=get_cities_air_data_missed_ranges)
     
-    task_get_history_data = PythonOperator(
-        task_id="get_history_data",
-        python_callable=get_history_data)    
+    task_process_cities_history_data = PythonOperator(
+        task_id="process_cities_history_data",
+        python_callable=process_cities_history_data)    
 
     task_finalize = PythonOperator(
         task_id="finalize",
         python_callable=finalize)
     
-task_get_cities_air_data_missed_ranges >> task_finalize
+task_get_cities_air_data_missed_ranges >> task_process_cities_history_data >> task_finalize

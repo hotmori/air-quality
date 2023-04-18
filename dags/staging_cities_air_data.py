@@ -4,8 +4,8 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
-from common_package.common_module import get_db_connection, \
-                                         run_select, \
+from common_package.common_module import run_select, \
+                                         run_inserts, \
                                          get_openweather_key, \
                                          BASE_URL_OPENWEATHER_CURRENT
 
@@ -80,11 +80,7 @@ def save_cities_air_data(**kwargs):
     cities_air_data = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data')
     print("cities_air_data: ", cities_air_data)
     sql_inserts = generate_inserts(cities_air_data)
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(sql_inserts)
-    cursor.close()
-    connection.close()
+    run_inserts(sql_inserts)
 
 
 def generate_inserts(cities_air_data):

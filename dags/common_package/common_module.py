@@ -13,15 +13,23 @@ def get_db_connection():
     return connection
 
 def run_select(sql_select):
-    formatted_sql = " ".join(sql_select.split()) #remove extra blanks
+    result_sql = " ".join(sql_select.split()) #remove extra blanks
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute(formatted_sql)
+    cursor.execute(result_sql)
    
     result = cursor.fetchall()
     cursor.close()
     connection.close()
     return result
+
+def run_inserts(sql_inserts):
+    result_sql = sql_inserts + " commit;"
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute(result_sql)
+    cursor.close()
+    connection.close()
 
 def get_openweather_key():
     key = Variable.get("openweather_k")
