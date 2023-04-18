@@ -4,24 +4,21 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 from airflow.models import Variable
 import requests, json
-from common_package.common_module import get_db_connection, BASE_URL_OPENWEATHER_CURRENT
+from common_package.common_module import get_db_connection, \
+                                         run_select, \
+                                         get_openweather_key, \
+                                         BASE_URL_OPENWEATHER_CURRENT
 
 def finalize():
     print("All is done")
 
 def get_cities():
-    request = "select c.city_id, cc.longitude, cc.latitude \
+    request_select = "select c.city_id, cc.longitude, cc.latitude \
               from staging.vcities c \
-              join staging.cities_coordinates cc \
+              join staging.vcities_coordinates cc \
                 on c.city_id = cc.city_id \
               "
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute(request)
-   
-    cities = cursor.fetchall()
-    cursor.close()
-    connection.close()
+    cities = run_select(request_select)    
     city_dict = {}
 
     for city in cities:
@@ -31,7 +28,7 @@ def get_cities():
 
 def get_city_air_data(latitude, longitude):
     base_url = BASE_URL_OPENWEATHER_CURRENT
-    key = Variable.get("openweather_k")
+    key = get_openweather_key()
     request_url = f'{base_url}lat={latitude}&lon={longitude}&appid={key}'
     response = requests.get(request_url)
     status_code = response.status_code

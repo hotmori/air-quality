@@ -1,4 +1,5 @@
 from airflow.hooks.postgres_hook import PostgresHook
+from airflow.models import Variable
 
 BASE_URL_OPENWEATHER_CURRENT = 'http://api.openweathermap.org/data/2.5/air_pollution?'
 BASE_URL_OPENWEATHER_HISTORY = 'http://api.openweathermap.org/data/2.5/air_pollution/history?'
@@ -21,3 +22,11 @@ def run_select(sql_select):
     cursor.close()
     connection.close()
     return result
+
+def get_openweather_key():
+    key = Variable.get("openweather_k")
+    return key
+
+def get_ninjas_key():
+    key = Variable.get("ninjas_k")
+    return key
