@@ -19,8 +19,6 @@ def get_cities_air_data_missed_ranges():
                                 join staging.vcities_coordinates vc on vc.city_id = vr.city_id\
                                 order by vr.city_id")
     print ("missed_ranges", missed_ranges)
-    if not missed_ranges:
-        raise AirflowSkipException
 
     result_missed_ranges = {}
     for range in missed_ranges:
@@ -125,6 +123,8 @@ def save_city_history_data(city_id, city_air_history):
 def process_cities_history_data(**kwargs):
     ti = kwargs['ti']
     cities_ranges = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data_missed_ranges')
+    if not cities_ranges:
+        raise AirflowSkipException    
     for city in cities_ranges:
         city_air_history = get_city_history_data(city_id=city, \
                                         ux_start = cities_ranges[city]["ux_start"], \
