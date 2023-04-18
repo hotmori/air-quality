@@ -1,3 +1,4 @@
 create or replace view vcities as
-select city_id,name,country,is_active,ts_insert
-from cities c ;
+select city_id,name,country,ts_insert
+from cities c 
+where is_active != 0;
