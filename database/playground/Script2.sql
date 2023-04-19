@@ -1,6 +1,7 @@
 create schema if not exists transform;
 
 SET search_path TO transform;
+select from staging.cities;
 
 drop table cities_air;
 create table cities_air(city_id integer,
@@ -21,7 +22,9 @@ create table cities_air(city_id integer,
 						);
 						
 					
-create unique index city_air_pk on cities_air (city_id, date_trunc('hour', ts));			
+create unique index city_air_pk on cities_air (city_id, date_trunc('hour', ts_hour));			
 delete from cities_air;
 
 select load_data();
+
+select from staging.cities;
