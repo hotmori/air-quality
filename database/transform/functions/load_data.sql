@@ -1,6 +1,7 @@
-CREATE OR REPLACE PROCEDURE transform.load_data()
- LANGUAGE sql
-AS $procedure$
+create or replace function transform.load_data()
+ returns int4
+ language sql
+as $function$
 
 
   delete
@@ -72,6 +73,5 @@ AS $procedure$
                                 t1.pm10,
                                 t1.nh3);
 
---SELECT 0;
-$procedure$
-;
+  select 0;
+$function$
