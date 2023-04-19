@@ -1,8 +1,13 @@
-create or replace function transform.load_data()
- returns integer as $$
+CREATE OR REPLACE FUNCTION transform.load_data()
+ RETURNS integer
+ LANGUAGE plpgsql
+AS $function$
+declare
+  l_deleted_rows integer;
+  l_row_count integer;
 begin
 
-
+  GET DIAGNOSTICS l_deleted_rows = ROW_COUNT;
   delete
   from transform.cities_air ca
   where not exists (select null
@@ -73,7 +78,9 @@ begin
                                 t1.nh3);
 
   --select 1;
-  return 1;
+   select count(*) into l_row_count from transform.cities_air;
+   return l_row_count;
 end;
 
-$$ LANGUAGE plpgsql;
+$function$
+;
