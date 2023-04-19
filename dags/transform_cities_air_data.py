@@ -12,15 +12,23 @@ from common_package.common_module import run_select, \
 def finalize():
     print("All is done")
 
+def load_all_cities_air_data():
+    call_func_sql = "select transform.load_data();"
+    
+    result_row_count = run_select(call_func_sql)[0][0]
+    print(result_row_count)
 
 with DAG(dag_id="transform_cities_air_data",
          start_date=datetime(2021,1,1),
          schedule_interval="5 * * * *",
          catchup=False) as dag:
-
+    
+    task_load_all_cities_air_data = PythonOperator(
+        task_id="load_all_cities_air_data",
+        python_callable=load_all_cities_air_data)
    
     task_finalize = PythonOperator(
         task_id="finalize",
         python_callable=finalize)
 
-task_finalize
+task_load_all_cities_air_data >> task_finalize
