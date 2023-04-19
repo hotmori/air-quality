@@ -4,3 +4,4 @@
 *.log
 /dags/__pycache__
 /dags/common_package/__pycache__/*.pyc
+/dags/transform/__pycache__

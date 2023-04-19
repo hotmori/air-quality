@@ -10,12 +10,16 @@ select from staging.cities;
 delete from "transform".cities_air; 
 call xload_data();
 
+drop procedure transform.load_data();
+
 create or replace function transform.load_data()
- returns int4
- language sql
-as $function$
+ returns integer as $$
+declare
+  l_deleted_rows integer;
+  l_merged_rows integer;
+begin
 
-
+  GET DIAGNOSTICS l_deleted_rows = ROW_COUNT;
   delete
   from transform.cities_air ca
   where not exists (select null
@@ -84,6 +88,10 @@ as $function$
                                 t1.pm2_5,
                                 t1.pm10,
                                 t1.nh3);
+  
+	GET DIAGNOSTICS l_merged_rows = ROW_COUNT;
+  --select 1;
+  return l_merged_rows;
+end; 
 
-  select 0;
-$function$
+$$ LANGUAGE plpgsql;

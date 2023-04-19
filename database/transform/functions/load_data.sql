@@ -1,7 +1,6 @@
 create or replace function transform.load_data()
- returns int4
- language sql
-as $function$
+ returns integer as $$
+begin
 
 
   delete
@@ -73,5 +72,8 @@ as $function$
                                 t1.pm10,
                                 t1.nh3);
 
-  select 0;
-$function$
+  --select 1;
+  return 1;
+end;
+
+$$ LANGUAGE plpgsql;
