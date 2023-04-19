@@ -20,14 +20,16 @@ def run_select(sql_select):
    
     result = cursor.fetchall()
     cursor.close()
+    connection.commit()
     connection.close()
     return result
 
 def run_inserts(sql_inserts):
-    result_sql = sql_inserts + " commit;"
+    result_sql = sql_inserts
     connection = get_db_connection()
     cursor = connection.cursor()
     cursor.execute(result_sql)
+    connection.commit()
     cursor.close()
     connection.close()
 

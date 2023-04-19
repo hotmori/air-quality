@@ -78,6 +78,8 @@ begin
                                 t1.nh3);
 
   --select 1;
+
+
    select count(*) into l_row_count from transform.cities_air;
    return l_row_count;
 end;
