@@ -32,4 +32,10 @@ rollback;
 
 delete from staging.cities where city_id  =5;
 
-select count(*), source_flg from cities_air ca group by source_flg ;
+select count(*), source_flg, city_id 
+from cities_air ca group by source_flg , city_id 
+order by city_id , source_flg;
+
+276	H
+338	C
+
