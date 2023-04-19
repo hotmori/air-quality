@@ -99,7 +99,7 @@ with DAG(dag_id="staging_cities",
     
     task_update_cities = PostgresOperator(task_id = "update_cities",
                                           postgres_conn_id="postgres_default",
-                                          sql = "staging/sql/dml_cities.sql")
+                                          sql = "sql/dml_cities.sql")
     
     task_get_cities_with_empty_coordinates = PythonOperator(
         task_id="get_cities_with_empty_coordinates",
