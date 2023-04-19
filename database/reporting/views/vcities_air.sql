@@ -13,6 +13,7 @@ select ca.city_id,
        ca.no,
        ca.no2,
        ca.o3,
+       ca.so2,
        ca.pm2_5,
        ca.pm10,
        ca.nh3

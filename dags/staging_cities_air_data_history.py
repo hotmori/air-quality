@@ -87,6 +87,7 @@ def generate_inserts(city_id, city_history_air):
                                                 no, \
                                                 no2, \
                                                 o3, \
+                                                so2, \
                                                 pm2_5, \
                                                 pm10, \
                                                 nh3, \
@@ -103,13 +104,14 @@ def generate_inserts(city_id, city_history_air):
                        {city_history_air[ux_timestamp]["component_no"]}, \
                        {city_history_air[ux_timestamp]["component_no2"]}, \
                        {city_history_air[ux_timestamp]["component_o3"]}, \
+                       {city_history_air[ux_timestamp]["component_so2"]}, \
                        {city_history_air[ux_timestamp]["component_pm2_5"]},\
                        {city_history_air[ux_timestamp]["component_pm10"]},\
                        {city_history_air[ux_timestamp]["component_nh3"]}, \
                        \'H\'\
                        )\n'
     
-    result_sql = f'{sql_ins} values {sql_vals}; commit;'
+    result_sql = f'{sql_ins} values {sql_vals};'
     result_sql = " ".join(result_sql.split())
     print ("result_sql: ", result_sql)
 

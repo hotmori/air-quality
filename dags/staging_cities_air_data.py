@@ -91,6 +91,7 @@ def generate_inserts(cities_air_data):
                                                 no, \
                                                 no2, \
                                                 o3, \
+                                                so2, \
                                                 pm2_5, \
                                                 pm10, \
                                                 nh3 \
@@ -105,12 +106,13 @@ def generate_inserts(cities_air_data):
                        {cities_air_data[city_air_data]["component_no"]}, \
                        {cities_air_data[city_air_data]["component_no2"]}, \
                        {cities_air_data[city_air_data]["component_o3"]}, \
+                       {cities_air_data[city_air_data]["component_so2"]}, \
                        {cities_air_data[city_air_data]["component_pm2_5"]},\
                        {cities_air_data[city_air_data]["component_pm10"]},\
                        {cities_air_data[city_air_data]["component_nh3"]}\
                        )\n'
     
-    result_sql = f'{sql_ins} values {sql_vals}; commit;'
+    result_sql = f'{sql_ins} values {sql_vals};'
     result_sql = " ".join(result_sql.split())
     print ("result_sql: ", result_sql)
     return result_sql
