@@ -27,6 +27,7 @@ begin
                 va.no,
                 va.no2,
                 va.o3,
+                va.so2,
                 va.pm2_5,
                 va.pm10,
                 va.nh3
@@ -45,6 +46,7 @@ begin
                                no = t1.no,
                                no2 = t1.no2,
                                o3 = t1.o3,
+                               so2 = t1.so2,
                                pm2_5 = t1.pm2_5,
                                pm10 = t1.pm10,
                                nh3 = t1.nh3
@@ -59,6 +61,7 @@ begin
                                 no,
                                 no2,
                                 o3,
+                                so2,
                                 pm2_5,
                                 pm10,
                                 nh3)
@@ -73,6 +76,7 @@ begin
                                 t1.no,
                                 t1.no2,
                                 t1.o3,
+                                t1.so2,
                                 t1.pm2_5,
                                 t1.pm10,
                                 t1.nh3);

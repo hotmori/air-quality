@@ -94,7 +94,7 @@ def generate_inserts(city_id, city_history_air):
                                                 source_flg \
                                                 ) """
     sql_vals = ""
-    print (city_id, "city_history_air " , city_history_air)
+    #print (city_id, "city_history_air " , city_history_air)
     for i, ux_timestamp in enumerate(city_history_air):
     
         sql_vals += (',' if i > 0 else '') + f'({city_id},  \
@@ -113,7 +113,7 @@ def generate_inserts(city_id, city_history_air):
     
     result_sql = f'{sql_ins} values {sql_vals};'
     result_sql = " ".join(result_sql.split())
-    print ("result_sql: ", result_sql)
+    #print ("result_sql: ", result_sql)
 
     return result_sql
 
