@@ -9,6 +9,9 @@ as (select 1,  'Saint Petersburg', 'Russia', 1 union all
     select 8, 'Split', 'Croatia', 1 union all
     select 9, 'Bremen', 'Germany', 1 union all
     select 10, 'Wroclaw', 'Poland', 1 union all
+    select 11, 'Warsaw', 'Poland', 1 union all
+    select 12, 'Gdansk', 'Poland', 1 union all
+    select 13, 'Berlin', 'Germany', 1 union all    
     select -1, null, null, null where 1=0 -- fake ending statement
 	)
 merge into staging.cities as t2
