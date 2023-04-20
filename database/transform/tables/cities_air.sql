@@ -19,4 +19,5 @@ create table cities_air(city_id integer,
 
 create unique index cities_air_pk on cities_air (city_id, date_trunc('hour', ts_hour));
 
+create index cities_name_idx on cities_air(city_name);
 create index cities_country_name_idx on cities_air(country_name);

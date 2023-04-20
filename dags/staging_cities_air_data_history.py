@@ -44,7 +44,7 @@ def get_city_history_data(city_id, ux_start, ux_end, latitude, longitude):
     base_url = BASE_URL_OPENWEATHER_HISTORY
     key = get_openweather_key()
     request_url = f'{base_url}lat={latitude}&lon={longitude}&start={ux_start}&end={ux_end}&appid={key}'
-    print("request_url", request_url)
+    #print("request_url", request_url)
     response = requests.get(request_url)
     status_code = response.status_code
     if status_code != 200:
