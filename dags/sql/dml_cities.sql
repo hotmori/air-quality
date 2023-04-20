@@ -12,6 +12,8 @@ as (select 1,  'Saint Petersburg', 'Russia', 1 union all
     select 11, 'Warsaw', 'Poland', 1 union all
     select 12, 'Gdansk', 'Poland', 1 union all
     select 13, 'Berlin', 'Germany', 1 union all
+    select 14, 'Sarapul', 'Russia', 1 union all
+    select 15, 'Izhevsk', 'Russia', 1 union all
     select 100, 'Beijing', 'China', 1 union all
     select -1, null, null, null where 1=0 -- fake ending statement
 	)
