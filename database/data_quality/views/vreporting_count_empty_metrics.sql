@@ -1,4 +1,4 @@
-create or replace view vcount_empty_metrics
+create or replace view vreporting_count_empty_metrics
 as
 select count(case when va.aqi is null then 1 end) cnt_aqi,
         count(case when va.co is null then 1 end) cnt_co,
@@ -9,4 +9,4 @@ select count(case when va.aqi is null then 1 end) cnt_aqi,
 		count(case when va.pm2_5 is null then 1 end) cnt_pm2_5,
 		count(case when va.pm10 is null then 1 end) cnt_pm10,
 		count(case when va.nh3  is null then 1 end) cnt_nh3
-   from staging.vcities_air va  ;
+   from reporting.vcities_air va  ;
