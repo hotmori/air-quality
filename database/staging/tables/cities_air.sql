@@ -1,19 +1,19 @@
 SET search_path TO staging;
 
 
-create table cities_air(city_id integer,
-						ts timestamp,
-						aqi integer,
-						co float,
-						no float,
-						no2 float,
-						o3 float,
-						so2 float,
-						pm2_5 float,
-						pm10 float,
-						nh3 float,
-						ts_insert TIMESTAMP DEFAULT now(),
-						source_flg char default 'C'
+create table cities_air(city_id integer not null,
+						ts timestamp not null,
+						aqi integer not null,
+						co float not null,
+						no float not null,
+						no2 float not null,
+						o3 float not null,
+						so2 float not null,
+						pm2_5 float not null,
+						pm10 float not null,
+						nh3 float not null,
+						ts_insert TIMESTAMP DEFAULT now() not null,
+						source_flg char default 'C' not null
 						);
 
 create index cities_air_idx on cities_air (city_id);
