@@ -3,9 +3,6 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 from common_package.common_module import run_select \
 
-def finalize():
-    print("All is done")
-
 def load_all_cities_air_data():
     call_func_sql = "select transform.load_data();"
     
@@ -20,9 +17,5 @@ with DAG(dag_id="transform_cities_air_data",
     task_load_all_cities_air_data = PythonOperator(
         task_id="load_all_cities_air_data",
         python_callable=load_all_cities_air_data)
-   
-    task_finalize = PythonOperator(
-        task_id="finalize",
-        python_callable=finalize)
 
-task_load_all_cities_air_data >> task_finalize
+task_load_all_cities_air_data

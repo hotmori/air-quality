@@ -1,7 +1,7 @@
 create or replace view vhours_since
 as
 with r as (
-select '2023-04-01 00:00:00'::timestamp ts_hour_start ,
+select '2023-03-01 00:00:00'::timestamp ts_hour_start ,
         date_round(now() , '60 minutes')  at time zone 'UTC' ts_hour_end),
 r2 as (
 select r.ts_hour_start,

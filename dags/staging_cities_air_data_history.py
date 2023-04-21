@@ -8,9 +8,6 @@ from common_package.common_module import run_select, \
                                          get_openweather_key, \
                                          BASE_URL_OPENWEATHER_HISTORY
 
-def finalize():
-    print("All is done")
-
 def get_cities_air_data_missed_ranges():
     missed_ranges = run_select("select vr.city_id, vr.min_ts_hour, vr.max_ts_hour, vc.longitude, vc.latitude  \
                                 from staging.vcities_air_data_missed_ranges vr \
@@ -150,10 +147,6 @@ with DAG(dag_id="staging_cities_air_data_history",
     
     task_process_cities_history_data = PythonOperator(
         task_id="process_cities_history_data",
-        python_callable=process_cities_history_data)    
-
-    task_finalize = PythonOperator(
-        task_id="finalize",
-        python_callable=finalize)
+        python_callable=process_cities_history_data)
     
-task_get_cities_air_data_missed_ranges >> task_process_cities_history_data >> task_finalize
+task_get_cities_air_data_missed_ranges >> task_process_cities_history_data

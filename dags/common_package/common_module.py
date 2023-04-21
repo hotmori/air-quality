@@ -12,6 +12,22 @@ def get_db_connection():
     connection = pg_hook.get_conn()
     return connection
 
+def get_db_replica_connection():
+    pg_hook = PostgresHook(postgre_conn_id = "postgres_replica")
+    connection = pg_hook.get_conn()
+    return connection
+
+def run_select_replica(sql_select):
+    result_sql = " ".join(sql_select.split()) #remove extra blanks
+    connection = get_db_replica_connection()
+    cursor = connection.cursor()
+    cursor.execute(result_sql)
+   
+    result = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return result
+
 def run_select(sql_select):
     result_sql = " ".join(sql_select.split()) #remove extra blanks
     connection = get_db_connection()

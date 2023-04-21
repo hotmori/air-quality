@@ -7,9 +7,6 @@ from common_package.common_module import run_select, \
                                          get_openweather_key, \
                                          BASE_URL_OPENWEATHER_CURRENT
 
-def finalize():
-    print("All is done")
-
 def get_cities():
     request_select = "select c.city_id, cc.longitude, cc.latitude \
               from staging.vcities c \
@@ -128,8 +125,4 @@ with DAG(dag_id="staging_cities_air_data",
         task_id="save_cities_air_data",
         python_callable=save_cities_air_data)
 
-    task_finalize = PythonOperator(
-        task_id="finalize",
-        python_callable=finalize)
-
-task_get_cities_air_data >> task_save_cities_air_data >> task_finalize
+task_get_cities_air_data >> task_save_cities_air_data
