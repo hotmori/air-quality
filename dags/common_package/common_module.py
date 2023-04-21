@@ -12,8 +12,11 @@ def get_db_connection():
     connection = pg_hook.get_conn()
     return connection
 
+# doesn't work for unknown reason, still connecting to master
 def get_db_replica_connection():
-    pg_hook = PostgresHook(postgre_conn_id = "postgres_replica")
+    pg_hook = PostgresHook(postgre_conn_id ="postgres_replica",
+                           conn_name_attr = "postgres_replica",
+                           default_conn_name ="postgres_replica") 
     connection = pg_hook.get_conn()
     return connection
 

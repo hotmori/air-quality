@@ -37,4 +37,5 @@ select r2.city_id,
        r2.pm10 ,
        r2.nh3    
   from r2
+  join vhours_since vhs on vhs.ts_hour = r2.ts_hour 
  where r2.is_duplicate = 0;

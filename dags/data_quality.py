@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow import AirflowException
 from datetime import datetime
-from common_package.common_module import run_select_replica
+from common_package.common_module import run_select
 
 
 
@@ -12,7 +12,7 @@ def check_staging_missed_per_hour_data():
                     from data_quality.vstaging_cities_air_missed_per_hour_data\
                     order by country, name\
                   "
-    check_data = run_select_replica(sql_select)  
+    check_data = run_select(sql_select)  
     if check_data:
         for city in check_data:
             print( "Country: ", city[0], "city: ", city[1], "cnt: ", city[2])
@@ -22,7 +22,7 @@ def get_reporting_delivery_metrics():
     sql_select = "select data_delay_in_minutes \
     from data_quality.vreporting_data_delivery_metrics"
     
-    data_delay_in_minutes = run_select_replica(sql_select)[0][0]
+    data_delay_in_minutes = run_select(sql_select)[0][0]
     return {"data_delay_in_minutes": data_delay_in_minutes}
 
 def check_reporting_data_delay():
@@ -38,7 +38,7 @@ def check_reporting_cities_air_data_count():
                          cnt_expected \
                     from data_quality.vreporting_cities_air_data_count \
                     where cnt <> cnt_expected"
-    check_data = run_select_replica(sql_select)
+    check_data = run_select(sql_select)
     
     if check_data:
        for city in check_data:
