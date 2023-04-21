@@ -2,7 +2,6 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow import AirflowException
 from datetime import datetime
-import requests, json
 from common_package.common_module import run_select
 
 
@@ -48,7 +47,7 @@ def check_reporting_cities_air_data_count():
 
 with DAG(dag_id="data_quality",
          start_date=datetime(2021,1,1),
-         schedule_interval="15 * * * *",
+         schedule_interval="30 * * * *",
          catchup=False) as dag:
     
     task_check_staging_missed_per_hour_data = PythonOperator(
@@ -59,8 +58,8 @@ with DAG(dag_id="data_quality",
         task_id="check_reporting_data_delay",
         python_callable=check_reporting_data_delay)
    
-    task_check_reporting_data_delay = PythonOperator(
+    task_check_reporting_cities_air_data_count = PythonOperator(
         task_id="check_reporting_cities_air_data_count",
         python_callable=check_reporting_cities_air_data_count)
 
-[task_check_staging_missed_per_hour_data, task_check_reporting_data_delay]
+[task_check_staging_missed_per_hour_data, task_check_reporting_data_delay, task_check_reporting_cities_air_data_count]

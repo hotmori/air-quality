@@ -92,7 +92,7 @@ def save_cities_coordinates_data(**kwargs):
 
 with DAG(dag_id="staging_cities",
          start_date=datetime(2021,1,1),
-         schedule_interval="*/5 * * * *",
+         schedule_interval="1 * * * *",
          catchup=False) as dag:
     
     task_update_cities = PostgresOperator(task_id = "update_cities",

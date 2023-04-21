@@ -14,7 +14,7 @@ def load_all_cities_air_data():
 
 with DAG(dag_id="transform_cities_air_data",
          start_date=datetime(2021,1,1),
-         schedule_interval="5 * * * *",
+         schedule_interval="15 * * * *",
          catchup=False) as dag:
     
     task_load_all_cities_air_data = PythonOperator(
