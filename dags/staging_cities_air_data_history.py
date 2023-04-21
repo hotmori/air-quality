@@ -1,9 +1,7 @@
 from airflow import DAG
-from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime
-from airflow.models import Variable
 import requests, json
 from common_package.common_module import run_select, \
                                          run_inserts, \

@@ -1,5 +1,4 @@
 from airflow import DAG
-from airflow.hooks.postgres_hook import PostgresHook
 from airflow.operators.python import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.exceptions import AirflowSkipException
