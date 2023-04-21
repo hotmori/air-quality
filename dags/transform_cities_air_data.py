@@ -15,8 +15,8 @@ def finalize():
 def load_all_cities_air_data():
     call_func_sql = "select transform.load_data();"
     
-    result_row_count = run_select(call_func_sql)[0][0]
-    print(result_row_count)
+    result_row_counts = run_select(call_func_sql)[0][0]
+    print(result_row_counts)
 
 with DAG(dag_id="transform_cities_air_data",
          start_date=datetime(2021,1,1),
