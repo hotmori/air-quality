@@ -15,6 +15,7 @@ as (select 1,  'Saint Petersburg', 'Russia', 1 union all
     select 14, 'Sarapul', 'Russia', 1 union all
     select 15, 'Izhevsk', 'Russia', 1 union all
     select 100, 'Beijing', 'China', 1 union all
+	select 200, 'New York City', 'United States', 1 union all
     select -1, null, null, null where 1=0 -- fake ending statement
 	)
 merge into staging.cities as t2
