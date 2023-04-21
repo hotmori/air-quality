@@ -1,6 +1,7 @@
 select city_name,
-       timestamp_hour,
+       timestamp_day,
        avg(aqi) aqi,
+       PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY aqi) median_aqi,
        avg(co) co,
        avg(no) no,
        avg(no2) no2,
@@ -10,5 +11,5 @@ select city_name,
        avg(pm10) pm10,
        avg(nh3) nh3
   from reporting.vcities_air
-where {{timestamp_hour}} and {{city_name}}
-group by city_name, timestamp_hour;
+where {{timestamp_day}} and {{city_name}}
+group by city_name, timestamp_day;

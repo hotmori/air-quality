@@ -16,7 +16,7 @@ def get_cities_air_data_missed_ranges():
                                 from staging.vcities_air_data_missed_ranges vr \
                                 join staging.vcities_coordinates vc on vc.city_id = vr.city_id\
                                 order by vr.city_id")
-    print ("missed_ranges", missed_ranges)
+    #print ("missed_ranges", missed_ranges)
 
     result_missed_ranges = {}
     for range in missed_ranges:
@@ -28,7 +28,7 @@ def get_cities_air_data_missed_ranges():
         longitude = range[3]
         latitude = range[4]
 
-        print(f'city_id: {city_id}, start: {dt_start}, end: {dt_end}')
+        #print(f'city_id: {city_id}, start: {dt_start}, end: {dt_end}')
         result_missed_ranges[city_id]={"ux_start": ux_start,
                                        "ux_end": ux_end,
                                        "longitude": longitude,

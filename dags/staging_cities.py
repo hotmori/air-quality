@@ -3,7 +3,6 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.exceptions import AirflowSkipException
 from datetime import datetime
-from airflow.models import Variable
 from common_package.common_module import run_select, \
                                          run_inserts, \
                                          get_ninjas_key, \

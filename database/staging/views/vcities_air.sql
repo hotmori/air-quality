@@ -1,7 +1,7 @@
 create or replace view vcities_air
 as
 with r as (
-select city_id,
+select ca.city_id,
        ca.aqi ,
        ca.co ,
        ca.no ,
@@ -12,10 +12,11 @@ select city_id,
        ca.pm10 ,
        ca.nh3 ,
        ca.ts_insert,
-	   date_round(ts at time zone 'UTC', '60 minutes') at time zone 'UTC' ts_hour,
+	   date_round(ca.ts at time zone 'UTC', '60 minutes') at time zone 'UTC' ts_hour,
 	   ts
-  from staging.cities_air ca 
-order by ts desc, city_id  ),
+  from cities_air ca
+  join vcities v on v.city_id = ca.city_id 
+order by ca.ts desc, ca.city_id  ),
 r2 as (
 select r.*, 
 	   case 

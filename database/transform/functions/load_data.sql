@@ -13,8 +13,8 @@ begin
   delete
   from transform.cities_air ca
   where not exists (select null
-					  from staging.vcities_air va
-					 where va.city_id = ca.city_id
+                      from staging.vcities_air va
+			where va.city_id = ca.city_id
                        and va.ts_hour = ca.ts_hour);
   get diagnostics l_deleted_rows = row_count;
 	
