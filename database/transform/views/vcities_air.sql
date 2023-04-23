@@ -5,9 +5,7 @@ select ca.city_id,
        ca.country_name,
        ca.longitude,
        ca.latitude,
-       ca.ts_hour timestamp_hour,
-	   date_trunc('day', ca.ts_hour) timestamp_day,
-	   date_trunc('month', ca.ts_hour) timestamp_month,
+       ca.ts_hour,
        ca.aqi,
        ca.co,
        ca.no,
@@ -16,5 +14,6 @@ select ca.city_id,
        ca.so2,
        ca.pm2_5,
        ca.pm10,
-       ca.nh3
-  from transform.vcities_air ca;
+       ca.nh3,
+       ca.ts_insert
+  from cities_air ca;
