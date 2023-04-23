@@ -15,5 +15,5 @@ select r2.hours_since_start_date,
   from r2
   cross join generate_series(0, r2.hours_since_start_date) n)
 select r3.now_ts,
-       r3.ts_hour 
+       r3.ts_hour
   from r3;

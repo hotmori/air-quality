@@ -8,4 +8,5 @@ select vh.ts_hour,
   left join vcities_air vca
   on vca.ts_hour = vh.ts_hour
   and vca.city_id = vc.city_id
+ where vh.now_ts <> vh.ts_hour
 order by vc.city_id , vh.ts_hour desc ;
