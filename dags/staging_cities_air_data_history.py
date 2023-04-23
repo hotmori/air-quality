@@ -9,7 +9,7 @@ from common_package.common_module import run_select, \
                                          BASE_URL_OPENWEATHER_HISTORY
 
 def get_cities_air_data_missed_ranges():
-    missed_ranges = run_select("select vr.city_id, vr.min_ts_hour, vr.max_ts_hour, vc.longitude, vc.latitude  \
+    missed_ranges = run_select("select vr.city_id, vr.min_ts_hour, vr.max_ts_hour, vc.longitude, vc.latitude, vr.min_inc_ts_hour  \
                                 from staging.vcities_air_data_missed_ranges vr \
                                 join staging.vcities_coordinates vc on vc.city_id = vr.city_id\
                                 order by vr.city_id")
@@ -20,13 +20,13 @@ def get_cities_air_data_missed_ranges():
         city_id = range[0]
         dt_start = range[1].strftime("%d/%m/%Y %H:%M:%S")
         dt_end = range[2].strftime("%d/%m/%Y %H:%M:%S")
-        ux_start = int(range[1].timestamp())
         ux_end = int(range[2].timestamp())
         longitude = range[3]
         latitude = range[4]
+        ux_start_inc = range[5]
 
         #print(f'city_id: {city_id}, start: {dt_start}, end: {dt_end}')
-        result_missed_ranges[city_id]={"ux_start": ux_start,
+        result_missed_ranges[city_id]={"ux_start": ux_start_inc,
                                        "ux_end": ux_end,
                                        "longitude": longitude,
                                        "latitude": latitude}
