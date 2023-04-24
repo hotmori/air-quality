@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.exceptions import AirflowSkipException
+from airflow.exceptions import AirflowSkipException, AirflowFailException
 from datetime import datetime
 import requests, json
 from common_package.common_module import run_select, \
@@ -121,7 +121,7 @@ def process_cities_history_data(**kwargs):
     ti = kwargs['ti']
     cities_ranges = ti.xcom_pull(key='return_value', task_ids='get_cities_air_data_missed_ranges')
     if not cities_ranges:
-        raise AirflowSkipException    
+        raise AirflowSkipException('All data is populated')
     for city in cities_ranges:
         city_air_history = get_city_history_data(city_id=city, \
                                         ux_start = cities_ranges[city]["ux_start"], \
@@ -129,10 +129,10 @@ def process_cities_history_data(**kwargs):
                                         latitude = cities_ranges[city]["latitude"], \
                                         longitude = cities_ranges[city]["longitude"]\
                                             )
+        if not city_air_history:
+            raise AirflowFailException(f'No historical data has been found for city_id: {city}')
         save_city_history_data(city, city_air_history)
         #print("history: ", city_air_history)
-
-
 
     return None
 
