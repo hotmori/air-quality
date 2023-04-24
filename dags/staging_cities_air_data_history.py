@@ -23,7 +23,7 @@ def get_cities_air_data_missed_ranges():
         ux_end = int(range[2].timestamp())
         longitude = range[3]
         latitude = range[4]
-        ux_start_inc = range[5]
+        ux_start_inc = int(range[5].timestamp())
 
         #print(f'city_id: {city_id}, start: {dt_start}, end: {dt_end}')
         result_missed_ranges[city_id]={"ux_start": ux_start_inc,
